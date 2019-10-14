@@ -82,7 +82,7 @@ router.post('/user/:action', function (req, res, next) {
 		output = dbconnection(type,object);
 	}
 	res.type('application/json');
-	res.send(output);
+	res.send(req.body);
 });
 
 module.exports = router;
