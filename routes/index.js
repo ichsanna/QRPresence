@@ -19,7 +19,7 @@ function dbconnection(type,object){
 			});
 		}
 	  });
-	return (object);
+	return (JSON.stringify(object));
 }
 
 // ----------------------- ROUTES -----------------------
