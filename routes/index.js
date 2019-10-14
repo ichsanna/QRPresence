@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const qr = require('qr-image');
 const MongoClient = require('mongodb').MongoClient;
-const url = "mongodb://<dbuser>:<dbpassword>@ds235078.mlab.com:35078/hahihu"
+const url = "mongodb://<hahaha>:<abc123>@ds235078.mlab.com:35078/hahihu"
 
 function dbconnection(type,object){
 	var message="Success";
