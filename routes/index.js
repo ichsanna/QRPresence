@@ -19,7 +19,7 @@ function dbconnection(type,object){
 			});
 		}
 	  });
-	return (message);
+	return (object);
 }
 
 // ----------------------- ROUTES -----------------------
