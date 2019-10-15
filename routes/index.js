@@ -23,11 +23,11 @@ function dbconnection(type,object){
 }
 
 // ----------------------- ROUTES -----------------------
-router.get('/', function (req, res, next) {
+router.get('/', (req, res) => {
 	res.render('index');
 });
 //  generate post, get get
-router.get('/qr/:action', function (req, res, next) {
+router.get('/qr/:action', (req, res) => {
 	var action = req.params.action;
 	if (action==='generate'){
 		var output = qr.image(req.query['classID'], {type: 'png',margin: 1,size: 50,ec_level: 'H'});
@@ -39,50 +39,50 @@ router.get('/qr/:action', function (req, res, next) {
 	}
 });
 
-router.post('/user/:action', function (req, res, next) {
-	// var action = req.params.action;
-	// var username = req.body.username;
-	// var password = req.body.password;
-	// var type;
-	// var obj;
-	// if (action==='register'){
-	// 	type = "findone";
-	// 	object = {username: username, password: password};
-	// 	type = "insertone";
-	// 	object = {username: username, password: password};
-	// 	var found = dbconnection(type,object);
-	// 	if (found!=="Error"){
-	// 		type = "insertone";
-	// 		object = {username: username, password: newpassword};
-	// 		output = dbconnection(type,object);
-	// 	}
-	// 	else{
-	// 		output = "Error";
-	// 	}
-	// }
-	// else if (action==='login'){
-	// 	type = "findone";
-	// 	object = {username: username, password: password};
-	// }
-	// else if (action==='changepwd'){
-	// 	var newpassword = req.body.newpassword;
-	// 	type = "findone";
-	// 	object = {username: username, password: password};
-	// 	var found = dbconnection(type,object);
-	// 	if (found!=="Error"){
-	// 		type = "updateone";
-	// 		object = {username: username, password: newpassword};
-	// 		output = dbconnection(type,object);
-	// 	}
-	// 	else{
-	// 		output = "Error";
-	// 	}
-	// }
-	// if (action!=='changepwd'){
-	// 	output = dbconnection(type,object);
-	// }
+router.post('/user/:action', (req, res) => {
+	var action = req.params.action;
+	var username = req.body.username;
+	var password = req.body.password;
+	var type;
+	var obj;
+	if (action==='register'){
+		type = "findone";
+		object = {username: username, password: password};
+		type = "insertone";
+		object = {username: username, password: password};
+		var found = dbconnection(type,object);
+		if (found!=="Error"){
+			type = "insertone";
+			object = {username: username, password: newpassword};
+			output = dbconnection(type,object);
+		}
+		else{
+			output = "Error";
+		}
+	}
+	else if (action==='login'){
+		type = "findone";
+		object = {username: username, password: password};
+	}
+	else if (action==='changepwd'){
+		var newpassword = req.body.newpassword;
+		type = "findone";
+		object = {username: username, password: password};
+		var found = dbconnection(type,object);
+		if (found!=="Error"){
+			type = "updateone";
+			object = {username: username, password: newpassword};
+			output = dbconnection(type,object);
+		}
+		else{
+			output = "Error";
+		}
+	}
+	if (action!=='changepwd'){
+		output = dbconnection(type,object);
+	}
 	res.type('application/json');
-	res.send(req.body);
+	res.send(output);
 });
 
 module.exports = router;
