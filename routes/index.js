@@ -34,7 +34,7 @@ router.post('/user/:action', (req, res) => {
                         message: "User tidak terdaftar dalam database"
                     }
                 }
-                res.status(404).send(json(response));
+                res.status(404).send(response);
 			}
 			req.db.collection('users').insertOne({username: username,password: password}, (err, result) => {
 				if(err) throw new Error('Gagal menambahkan username');
@@ -43,7 +43,7 @@ router.post('/user/:action', (req, res) => {
 					data : result
 				}
 			})
-			res.status(200).send(json(response));
+			res.status(200).send(response);
 		})
 	}
 	else if (action==='login'){
@@ -56,13 +56,14 @@ router.post('/user/:action', (req, res) => {
                         message: "User tidak terdaftar dalam database"
                     }
                 }
-                res.status(404).send(json(response));
+                res.status(404).send(response);
 			}
-			res.status(200).send(json(response));
+			res.status(200).send(response);
 		})
 	}
 	else if (action==='changepwd'){
 	}
+	res.type('application/json');
 	res.send(response);
 });
 
