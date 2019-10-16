@@ -64,7 +64,7 @@ router.post('/user/:action', (req, res) => {
 	else if (action==='changepwd'){
 	}
 	res.type('application/json');
-	res.send(response);
+	res.send("AAA");
 });
 
 module.exports = router;
