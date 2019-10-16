@@ -23,12 +23,11 @@ router.post('/user/:action', (req, res) => {
 	var action = req.params.action;
 	var username = req.body.username;
 	var password = req.body.password;
-	var response;
 	if (action==='register'){
 		req.db.collection('users').findOne({"username": username}, (err, result) => {
 			if(err) throw new Error('Gagal mendapatkan username');
             if(result){
-                response = {
+                let response = {
                     success: false,
                     data: {
                         message: "User tidak terdaftar dalam database"
@@ -38,19 +37,19 @@ router.post('/user/:action', (req, res) => {
 			}
 			req.db.collection('users').insertOne({"username": username,"password": password}, (err, result) => {
 				if(err) throw new Error('Gagal menambahkan username');
-				response = {
+				let response = {
 					success: true,
 					data : result
 				}
+				res.status(200).json(response);
 			})
-			res.status(200).json(response);
 		})
 	}
 	else if (action==='login'){
 		req.db.collection('users').findOne({username: username,password: password}, (err, result) => {
 			if(err) throw new Error('Gagal mendapatkan username');
             if(!result){
-                response = {
+                let response = {
                     success: false,
                     data: {
                         message: "User tidak terdaftar dalam database"
@@ -59,7 +58,7 @@ router.post('/user/:action', (req, res) => {
                 res.status(404).json(response);
 			}
 			else {
-				response = {
+				let response = {
                     success: true,
                     data: result
                 }
@@ -69,8 +68,8 @@ router.post('/user/:action', (req, res) => {
 	}
 	// else if (action==='changepwd'){
 	// }
-	res.type('application/json')
-	res.send(response)
+	// res.type('application/json')
+	// res.send(response)
 });
 
 module.exports = router;
