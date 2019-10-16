@@ -63,7 +63,7 @@ router.post('/user/:action', (req, res) => {
 	}
 	else if (action==='changepwd'){
 	}
-	res.send(result);
+	res.send(response).String();
 });
 
 module.exports = router;
