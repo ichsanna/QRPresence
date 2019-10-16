@@ -65,7 +65,7 @@ router.post('/user/:action', (req, res) => {
 	}
 
 	res.type('application/json');
-	res.send("Success");
+	res.send(response);
 });
 
 module.exports = router;
