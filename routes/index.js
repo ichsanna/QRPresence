@@ -58,11 +58,17 @@ router.post('/user/:action', (req, res) => {
                 }
                 res.status(404).json(response);
 			}
-			res.status(200).json(response);
+			else {
+				response = {
+                    success: true,
+                    data: result
+                }
+                res.status(200).json(response);
+			}
 		})
 	}
-	else if (action==='changepwd'){
-	}
+	// else if (action==='changepwd'){
+	// }
 	res.type('application/json')
 	res.send("AAA")
 });
