@@ -1,26 +1,6 @@
 const express = require('express');
 const router = express.Router();
 const qr = require('qr-image');
-const MongoClient = require('mongodb').MongoClient;
-const url = "mongodb://<hahaha>:<abc123>@ds235078.mlab.com:35078/hahihu"
-
-function dbconnection(type,object){
-	var message="Success";
-	MongoClient.connect(url, { useNewUrlParser: true }, function(err, db) {
-		if (err) throw err;
-		var dbo = db.db("qrpresence");
-		if (type==="insertone"){
-			dbo.collection("users").insertOne(object, function(err, res) {
-				if (err){
-					message = "Error";
-					throw err;
-				}
-				db.close();
-			});
-		}
-	  });
-	return (message);
-}
 
 // ----------------------- ROUTES -----------------------
 router.get('/', (req, res) => {
@@ -43,46 +23,49 @@ router.post('/user/:action', (req, res) => {
 	var action = req.params.action;
 	var username = req.body.username;
 	var password = req.body.password;
-	var type;
-	var obj;
+	var response;
 	if (action==='register'){
-		type = "findone";
-		object = {username: username, password: password};
-		type = "insertone";
-		object = {username: username, password: password};
-		var found = dbconnection(type,object);
-		if (found!=="Error"){
-			type = "insertone";
-			object = {username: username, password: newpassword};
-			output = dbconnection(type,object);
-		}
-		else{
-			output = "Error";
-		}
+		req.db.collection('users').findOne({username: username}, (err, result) => {
+			if(err) throw new Error('Gagal mendapatkan username');
+            if(result){
+                response = {
+                    success: false,
+                    data: {
+                        message: "User tidak terdaftar dalam database"
+                    }
+                }
+                res.status(404).json(response);
+			}
+			req.db.collection('users').insertOne({username: username,password: password}, (err, result) => {
+				if(err) throw new Error('Gagal menambahkan username');
+				response = {
+					success: true,
+					data : result
+				}
+			})
+			res.status(200).json(response);
+		})
 	}
 	else if (action==='login'){
-		type = "findone";
-		object = {username: username, password: password};
+		req.db.collection('users').findOne({username: username,password: password}, (err, result) => {
+			if(err) throw new Error('Gagal mendapatkan username');
+            if(!result){
+                response = {
+                    success: false,
+                    data: {
+                        message: "User tidak terdaftar dalam database"
+                    }
+                }
+                res.status(404).json(response);
+			}
+			res.status(200).json(response);
+		})
 	}
 	else if (action==='changepwd'){
-		var newpassword = req.body.newpassword;
-		type = "findone";
-		object = {username: username, password: password};
-		var found = dbconnection(type,object);
-		if (found!=="Error"){
-			type = "updateone";
-			object = {username: username, password: newpassword};
-			output = dbconnection(type,object);
-		}
-		else{
-			output = "Error";
-		}
 	}
-	if (action!=='changepwd'){
-		output = dbconnection(type,object);
-	}
+
 	res.type('application/json');
-	res.send(output);
+	res.send("Success");
 });
 
 module.exports = router;

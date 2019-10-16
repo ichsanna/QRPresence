@@ -1,7 +1,9 @@
-var express = require('express');
-var path = require('path');
-var bodyParser = require('body-parser');
-var routes = require('./routes/index');
+const express = require('express')
+const path = require('path')
+const bodyParser = require('body-parser');
+const routes = require('./routes/index');
+const mongodb = require('express-mongo-db')
+const mongourl = "mongodb://user:password1@ds235078.mlab.com:35078/hahihu"
 
 var app = express();
 
@@ -13,7 +15,7 @@ app.set('view engine', 'html');
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'views')));
-
+app.use(mongodb(mongourl));
 app.use('/', routes);
 
 // catch 404 and forward to error handler
