@@ -43,8 +43,8 @@ router.post('/user/:action', (req, res) => {
 					data : result
 				}
 			})
-			res.status(200).send(response);
 		})
+		res.status(200).send(response);
 	}
 	else if (action==='login'){
 		req.db.collection('users').findOne({username: username,password: password}, (err, result) => {
@@ -63,8 +63,7 @@ router.post('/user/:action', (req, res) => {
 	}
 	else if (action==='changepwd'){
 	}
-	res.type('application/json');
-	res.send("AAA");
+	
 });
 
 module.exports = router;
