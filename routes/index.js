@@ -25,7 +25,7 @@ router.post('/user/:action', (req, res) => {
 	var password = req.body.password;
 	var response;
 	if (action==='register'){
-		req.db.collection('users').findOne({username: username}, (err, result) => {
+		req.db.collection('users').findOne({"username": username}, (err, result) => {
 			if(err) throw new Error('Gagal mendapatkan username');
             if(result){
                 response = {
@@ -36,7 +36,7 @@ router.post('/user/:action', (req, res) => {
                 }
                 res.status(404).send(response);
 			}
-			req.db.collection('users').insertOne({username: username,password: password}, (err, result) => {
+			req.db.collection('users').insertOne({"username": username,"password": password}, (err, result) => {
 				if(err) throw new Error('Gagal menambahkan username');
 				response = {
 					success: true,
@@ -63,7 +63,8 @@ router.post('/user/:action', (req, res) => {
 	}
 	else if (action==='changepwd'){
 	}
-	
+	res.type('application/json')
+	res.send("AAA")
 });
 
 module.exports = router;
