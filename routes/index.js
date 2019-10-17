@@ -49,7 +49,7 @@ router.post('/user/:action', (req, res) => {
 		})
 	}
 	else if (action==='login'){
-		req.db.collection('users').findOne({username: username,password: password}, (err, result) => {
+		req.db.collection('users').findOne({"username": username}, (err, result) => {
 			if(err) throw new Error('Gagal mendapatkan username');
             if(!result){
                 let response = {
@@ -69,10 +69,18 @@ router.post('/user/:action', (req, res) => {
 			}
 		})
 	}
-	// else if (action==='changepwd'){
-	// }
-	// res.type('application/json')
-	// res.send(response)
+	else if (action==='changepwd'){
+		req.db.collection('users').updateOne({"username": username}, {"$set": {"password": password}}, (err, result) => {
+			if(err) throw new Error('Gagal mendapatkan username');
+            if(result){
+				let response = {
+                    success: true,
+                    data: result
+                }
+                res.status(404).json(response);
+			}
+		})
+	}
 });
 
 module.exports = router;
