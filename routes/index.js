@@ -30,7 +30,7 @@ router.post('/user/:action', (req, res) => {
                 let response = {
                     success: false,
                     data: {
-                        message: "User tidak terdaftar dalam database"
+                        message: "User sudah terdaftar"
                     }
                 }
                 res.status(404).json(response);
@@ -52,7 +52,7 @@ router.post('/user/:action', (req, res) => {
                 let response = {
                     success: false,
                     data: {
-                        message: "User tidak terdaftar dalam database"
+                        message: "Username dan/atau password salah"
                     }
                 }
                 res.status(404).json(response);

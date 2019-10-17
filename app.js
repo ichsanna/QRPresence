@@ -5,7 +5,7 @@ const routes = require('./routes/index');
 const mongodb = require('express-mongo-db')
 const mongourl = "mongodb://user:password1@ds235078.mlab.com:35078/hahihu"
 
-var app = express();
+const app = express();
 
 // view engine setup
 app.use(express.static(__dirname + '/views'));
