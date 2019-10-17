@@ -10,6 +10,25 @@ router.get('/', (res) => {
 router.get('/qr/:action', (req, res) => {
 	var action = req.params.action;
 	if (action==='get'){
+		req.db.collection('classes').findOne({"classid": req.query['classid']}, (err, result) => {
+			if(err) throw new Error('Gagal mendapatkan username');
+            if(!result){
+                let response = {
+                    success: false,
+                    data: {
+                        message: "Kelas tidak ditemukan"
+                    }
+                }
+                res.redirect('/qr/generate');
+			}
+			else {
+				let response = {
+                    success: true,
+                    data: result
+                }
+                var qrsalt = response.data.qrsalt;
+			}
+		})
 		//check qrsalt in database, if not exist redirect generate
 		//retrieve qrsalt in database, change req.query['classid'] to classid+qrsalt
 		var output = qr.image(req.query['classid'], {type: 'png',margin: 1,size: 50,ec_level: 'H'});
@@ -39,6 +58,7 @@ router.post('/user/:action', (req, res) => {
 	var newpassword = req.body.newpassword;
 	var fullname = req.body.fullname;
 	var nim = req.body.nim;
+	//Gimana caranya guru register?
 	if (action==='register'){
 		req.db.collection('users').findOne({"username": username}, (err, result) => {
 			if(err) throw new Error('Gagal mendapatkan username');
