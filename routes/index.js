@@ -23,6 +23,7 @@ router.post('/user/:action', (req, res) => {
 	var action = req.params.action;
 	var username = req.body.username;
 	var password = req.body.password;
+	var newpassword = req.body.newpassword;
 	var fullname = req.body.fullname;
 	var nim = req.body.nim;
 	if (action==='register'){
@@ -70,14 +71,28 @@ router.post('/user/:action', (req, res) => {
 		})
 	}
 	else if (action==='changepwd'){
-		req.db.collection('users').updateOne({"username": username}, {"$set": {"password": password}}, (err, result) => {
+		req.db.collection('users').findOne({"username": username,"password": password}, (err, result) => {
 			if(err) throw new Error('Gagal mendapatkan username');
-            if(result){
-				let response = {
-                    success: true,
-                    data: result
+            if(!result){
+                let response = {
+                    success: false,
+                    data: {
+                        message: "Password lama salah"
+                    }
                 }
                 res.status(404).json(response);
+			}
+			else {
+				req.db.collection('users').updateOne({"username": username}, {"$set": {"password": newpassword}}, (err, result) => {
+					if(err) throw new Error('Gagal mendapatkan username');
+					if(result){
+						let response = {
+							success: true,
+							data: result
+						}
+						res.status(404).json(response);
+					}
+				})
 			}
 		})
 	}
