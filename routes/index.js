@@ -1,16 +1,35 @@
 const express = require('express');
 const router = express.Router();
 const qr = require('qr-image');
+const md5 = require('md5');
 
 // ----------------------- ROUTES -----------------------
-router.get('/', (req, res) => {
+router.get('/', (res) => {
 	res.render('index');
 });
-//  generate post, get get
-router.get('/qr/get', (req, res) => {
-	var output = qr.image(req.query['classID'], {type: 'png',margin: 1,size: 50,ec_level: 'H'});
-	res.type('png');
-	output.pipe(res);
+router.get('/qr/:action', (req, res) => {
+	var action = req.params.action;
+	if (action==='get'){
+		//check qrsalt in database, if not exist redirect generate
+		//retrieve qrsalt in database, change req.query['classid'] to classid+qrsalt
+		var output = qr.image(req.query['classid'], {type: 'png',margin: 1,size: 50,ec_level: 'H'});
+		res.type('png');
+		output.pipe(res);
+	}
+	else if (action==='generate'){
+		var qrsalt = md5(Date.now())
+		req.db.collection('class').updateOne({"classid": classid}, {"$set": {"qrsalt": qrsalt}}, (err, result) => {
+			if(err) throw new Error('Gagal mendapatkan username');
+			if(result){
+				let response = {
+					success: true,
+					data: result
+				}
+				res.status(200).json(response);
+			}
+		})
+		res.redirect('/qr/get?class='+classid)
+	}
 });
 
 router.post('/user/:action', (req, res) => {
@@ -84,7 +103,7 @@ router.post('/user/:action', (req, res) => {
 							success: true,
 							data: result
 						}
-						res.status(404).json(response);
+						res.status(200).json(response);
 					}
 				})
 			}
