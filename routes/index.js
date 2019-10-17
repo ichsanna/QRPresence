@@ -7,16 +7,10 @@ router.get('/', (req, res) => {
 	res.render('index');
 });
 //  generate post, get get
-router.get('/qr/:action', (req, res) => {
-	var action = req.params.action;
-	if (action==='generate'){
-		var output = qr.image(req.query['classID'], {type: 'png',margin: 1,size: 50,ec_level: 'H'});
-		res.type('png');
-		output.pipe(res);
-	}
-	else if (action==='get'){
-		console.log("get");
-	}
+router.get('/qr/get', (req, res) => {
+	var output = qr.image(req.query['classID'], {type: 'png',margin: 1,size: 50,ec_level: 'H'});
+	res.type('png');
+	output.pipe(res);
 });
 
 router.post('/user/:action', (req, res) => {
