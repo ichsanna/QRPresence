@@ -49,7 +49,7 @@ router.post('/user/:action', (req, res) => {
 		})
 	}
 	else if (action==='login'){
-		req.db.collection('users').findOne({"username": username}, (err, result) => {
+		req.db.collection('users').findOne({"username": username,"password": password}, (err, result) => {
 			if(err) throw new Error('Gagal mendapatkan username');
             if(!result){
                 let response = {
@@ -78,6 +78,27 @@ router.post('/user/:action', (req, res) => {
                     data: result
                 }
                 res.status(404).json(response);
+			}
+		})
+	}
+	else if (action==='getinfo'){
+		req.db.collection('users').findOne({"username": username}, (err, result) => {
+			if(err) throw new Error('Gagal mendapatkan username');
+            if(!result){
+                let response = {
+                    success: false,
+                    data: {
+                        message: "Username tidak ditemukan"
+                    }
+                }
+                res.status(404).json(response);
+			}
+			else {
+				let response = {
+                    success: true,
+                    data: result
+                }
+                res.status(200).json(response);
 			}
 		})
 	}
