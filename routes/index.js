@@ -23,6 +23,8 @@ router.post('/user/:action', (req, res) => {
 	var action = req.params.action;
 	var username = req.body.username;
 	var password = req.body.password;
+	var fullname = req.body.fullname;
+	var nim = req.body.nim;
 	if (action==='register'){
 		req.db.collection('users').findOne({"username": username}, (err, result) => {
 			if(err) throw new Error('Gagal mendapatkan username');
@@ -35,7 +37,8 @@ router.post('/user/:action', (req, res) => {
                 }
                 res.status(404).json(response);
 			}
-			req.db.collection('users').insertOne({"username": username,"password": password}, (err, result) => {
+
+			req.db.collection('users').insertOne({"username": username,"password": password,"fullname": fullname,"nim": nim}, (err, result) => {
 				if(err) throw new Error('Gagal menambahkan username');
 				let response = {
 					success: true,
