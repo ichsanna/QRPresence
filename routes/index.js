@@ -52,15 +52,16 @@ router.get('/qr/:action', (req, res) => {
 });
 
 router.get('/getusers', (req,res) => {
-	req.db.collection('users').find((err,result) => {
+	req.db.collection('users').find({},(err,result) => {
 		if(err) throw new Error('Gagal mendapatkan data');
-				let response = {
-					success: true,
-					data : result
-				}
-				res.status(200).json(response);
+		let response = {
+			success: true,
+			data : result
+		}
+		res.status(200).json(response);
 	})
-})
+});
+
 router.post('/user/:action', (req, res) => {
 	var action = req.params.action;
 	var username = req.body.username;
