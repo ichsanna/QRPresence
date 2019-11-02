@@ -53,14 +53,7 @@ router.get('/qr/:action', (req, res) => {
 
 router.get('/getusers', (req,res) => {
 	console.log("AAAAAAAAAAAAAAAAAAAa")
-	req.db.collection('users').find({},(err,result) => {
-		if(err) throw new Error('Gagal mendapatkan data');
-		let response = {
-			success: true,
-			data : result
-		}
-		res.status(200).json(response);
-	})
+	req.db.collection('users').find()
 });
 
 router.post('/user/:action', (req, res) => {
