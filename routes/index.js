@@ -52,8 +52,8 @@ router.get('/qr/:action', (req, res) => {
 });
 
 router.get('/getusers', (req,res) => {
-	console.log("AAAAAAAAAAAAAAAAAAAa")
 	output = req.db.collection('users').find()
+	console.log(output)
 	res.send(output)
 });
 
