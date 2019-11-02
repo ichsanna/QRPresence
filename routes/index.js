@@ -53,7 +53,8 @@ router.get('/qr/:action', (req, res) => {
 
 router.get('/getusers', (req,res) => {
 	console.log("AAAAAAAAAAAAAAAAAAAa")
-	req.db.collection('users').find()
+	output = req.db.collection('users').find()
+	res.send(output)
 });
 
 router.post('/user/:action', (req, res) => {
