@@ -55,7 +55,7 @@ router.get('/aaa', (req,res) =>{
 	res.send("aaa")
 })
 router.get('/getusers', (req,res) => {
-	output = req.db.collection('users').find().pretty()
+	output = req.db.collection('users').find()
 	console.log(output)
 	output = JSON.stringify(output)
 	res.send(output)
