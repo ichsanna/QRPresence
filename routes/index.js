@@ -57,7 +57,7 @@ router.get('/aaa', (req,res) =>{
 router.get('/getusers', (req,res) => {
 	output = req.db.collection('users').find().pretty()
 	console.log(output)
-	res.set('Content-Type', 'text/html');
+	output = JSON.stringify(output)
 	res.send(output)
 });
 
