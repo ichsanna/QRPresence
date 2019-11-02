@@ -55,9 +55,8 @@ router.get('/aaa', (req,res) =>{
 	res.send("aaa")
 })
 router.get('/getusers', (req,res) => {
-	output = req.db.collection('users').find()
+	output = req.db.collection('users').find().cursor().pipe(JSONStream.stringify()).pipe(res.type('json'))
 	console.log(output)
-	output = JSON.stringify(output)
 	res.send(output)
 });
 
