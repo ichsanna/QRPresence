@@ -52,9 +52,9 @@ router.get('/qr/:action', (req, res) => {
 });
 
 router.get('/getusers', (req,res) => {
-	output = req.db.collection('users').find()
+	output = req.db.collection('users').find().pretty()
 	console.log(output)
-	res.send(output)
+	res.json(output)
 });
 
 router.post('/user/:action', (req, res) => {
