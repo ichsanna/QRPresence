@@ -54,7 +54,8 @@ router.get('/qr/:action', (req, res) => {
 router.get('/getusers', (req,res) => {
 	output = req.db.collection('users').find().pretty()
 	console.log(output)
-	res.redirect('/aaa')
+	res.set('Content-Type', 'text/html');
+	res.send(output)
 });
 
 router.post('/user/:action', (req, res) => {
