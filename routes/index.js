@@ -63,10 +63,15 @@ router.post('/class/create', (req,res) => {
 	var classid = randomstring({length: 10});
 	var username = req.body.username
 	var found = false
+	// Ini nggak tau kenapa nggak bisa
 	while (!found){
+		console.log(classid)
 		req.db.collection('classes').findOne({"classid": classid}, (err, result) => {
 			if(err) throw new Error('Gagal mendapatkan kelas');
+			console.log(result)
+			console.log("b")
 			if(!result){
+				console.log("a")
 				found = true
 			}
 		})
@@ -75,6 +80,7 @@ router.post('/class/create', (req,res) => {
 		if(err) throw new Error('Gagal menambahkan kelas');
 		let response = {
 			success: true,
+			classid: classid,
 			data : result
 		}
 		res.status(200).json(response);
@@ -98,16 +104,18 @@ router.post('/user/:action', (req, res) => {
                         message: "User sudah terdaftar"
                     }
                 }
-                res.status(404).json(response);
+				res.status(404).json(response);
 			}
-		})
-		req.db.collection('users').insertOne({"username": username,"password": password,"fullname": fullname,"nim": nim}, (err, result) => {
-			if(err) throw new Error('Gagal menambahkan username');
-			let response = {
-				success: true,
-				data : result
+			else {
+				req.db.collection('users').insertOne({"username": username,"password": password,"fullname": fullname,"nim": nim}, (err, result) => {
+					if(err) throw new Error('Gagal menambahkan username');
+					let response = {
+						success: true,
+						data : result
+					}
+					res.status(200).json(response);
+				})
 			}
-			res.status(200).json(response);
 		})
 	}
 	else if (action==='login'){
