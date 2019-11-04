@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const qr = require('qr-image');
 const md5 = require('md5');
+const randomstring = require('crypto-random-string');
 
 // ----------------------- ROUTES -----------------------
 router.get('/', (res) => {
@@ -51,16 +52,34 @@ router.get('/qr/:action', (req, res) => {
 	}
 });
 
-router.get('/aaa', (req,res) =>{
-	res.send("aaa")
-})
 router.get('/getusers', (req,res) => {
 	var output = req.db.collection('users').find().toArray()
-	output.then((result) =>{
+	output.then((result) => {
 		res.send(result)
 	})
 });
 
+router.post('/class/create', (req,res) => {
+	var classid = randomstring({length: 10});
+	var username = req.body.username
+	var found = false
+	while (!found){
+		req.db.collection('classes').findOne({"classid": classid}, (err, result) => {
+			if(err) throw new Error('Gagal mendapatkan kelas');
+			if(!result){
+				found = true
+			}
+		})
+	}
+	req.db.collection('classes').insertOne({"username": username,"classid": classid}, (err, result) => {
+		if(err) throw new Error('Gagal menambahkan kelas');
+		let response = {
+			success: true,
+			data : result
+		}
+		res.status(200).json(response);
+	})
+})
 router.post('/user/:action', (req, res) => {
 	var action = req.params.action;
 	var username = req.body.username;
@@ -68,7 +87,7 @@ router.post('/user/:action', (req, res) => {
 	var newpassword = req.body.newpassword;
 	var fullname = req.body.fullname;
 	var nim = req.body.nim;
-	//Gimana caranya guru register?
+	// Register bisa kedobel
 	if (action==='register'){
 		req.db.collection('users').findOne({"username": username}, (err, result) => {
 			if(err) throw new Error('Gagal mendapatkan username');
@@ -81,15 +100,14 @@ router.post('/user/:action', (req, res) => {
                 }
                 res.status(404).json(response);
 			}
-
-			req.db.collection('users').insertOne({"username": username,"password": password,"fullname": fullname,"nim": nim}, (err, result) => {
-				if(err) throw new Error('Gagal menambahkan username');
-				let response = {
-					success: true,
-					data : result
-				}
-				res.status(200).json(response);
-			})
+		})
+		req.db.collection('users').insertOne({"username": username,"password": password,"fullname": fullname,"nim": nim}, (err, result) => {
+			if(err) throw new Error('Gagal menambahkan username');
+			let response = {
+				success: true,
+				data : result
+			}
+			res.status(200).json(response);
 		})
 	}
 	else if (action==='login'){
