@@ -22,24 +22,45 @@ router.get('/getusers', (req,res) => {
 	})
 });
 
-router.post('/class/create', (req,res) => {
-	var classid = randomstring({length: 10});
+router.post('/class/:action', (req,res) => {
+	var action = req.params.action
+	var classid = randomstring({length: 15});
 	var username = req.body.username
-	req.db.collection('classes').findOne({"classid": classid}, (err, result) => {
-		if (err) throw new Error('Gagal mendapatkan kelas');
-		if (!result){
-			req.db.collection('classes').insertOne({"owner": username,"classid": classid}, (err, result) => {
-				if(err) throw new Error('Gagal menambahkan kelas');
-				let response = {
-					success: true,
+	if (action==='create'){
+		req.db.collection('classes').findOne({"classid": classid}, (err, result) => {
+			if (err) throw new Error('Gagal mendapatkan kelas');
+			if (!result){
+				req.db.collection('classes').insertOne({"owner": username,"classid": classid}, (err, result) => {
+					if(err) throw new Error('Gagal menambahkan kelas');
+					let response = {
+						success: true,
+						data : {
+							classid: classid
+						}
+					}
+					res.status(200).json(response);
+				})
+			}
+			else res.status(400).json({success: false})
+		})
+	}
+	else if (action==='presensi'){
+		var fullname = req.body.fullname
+		var nim = req.body.nim
+		var fieldpresensi = {fullname: fullname, nim: nim}
+		req.db.collection('classes').update({"classid": classid},{$push:{"presensi": fieldpresensi}}, (err,result) => {
+			if(err) throw new Error('Gagal menambahkan kelas');
+			let response = {
+				success: true,
+				data : {
 					classid: classid,
-					data : result
+					fullname = fullname,
+					nim = nim
 				}
-				res.status(200).json(response);
-			})
-		}
-		else res.status(400).json({success: false})
-	})
+			}
+			res.status(200).json(response);
+		})
+	}
 })
 router.post('/user/:action', (req, res) => {
 	var action = req.params.action
