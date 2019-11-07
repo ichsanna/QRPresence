@@ -54,8 +54,8 @@ router.post('/class/:action', (req,res) => {
 				success: true,
 				data : {
 					classid: classid,
-					fullname = fullname,
-					nim = nim
+					fullname: fullname,
+					nim: nim
 				}
 			}
 			res.status(200).json(response);
