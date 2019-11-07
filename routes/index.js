@@ -158,7 +158,7 @@ router.post('/user/:action', (req, res) => {
                 res.status(404).json(response);
 			}
 			else {
-				delete result.password
+				// delete result.password
 				let response = {
                     success: true,
                     data: result
