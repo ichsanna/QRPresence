@@ -69,9 +69,9 @@ router.post('/user/:action', (req, res) => {
 	var newpassword = req.body.newpassword
 	var fullname = req.body.fullname
 	var nim = req.body.nim
-	password.split("").reverse().join("")
-	password = sha1(password+username)
 	if (action==='register'){
+		password.split("").reverse().join("")
+		password = sha1(password+username)
 		req.db.collection('users').findOne({"username": username}, (err, result) => {
 			if(err) throw new Error('Gagal mendapatkan username');
             if(result){
@@ -97,6 +97,8 @@ router.post('/user/:action', (req, res) => {
 		})
 	}
 	else if (action==='login'){
+		password.split("").reverse().join("")
+		password = sha1(password+username)
 		req.db.collection('users').findOne({"username": username,"password": password}, (err, result) => {
 			if(err) throw new Error('Gagal mendapatkan username');
             if(!result){
@@ -119,6 +121,8 @@ router.post('/user/:action', (req, res) => {
 		})
 	}
 	else if (action==='changepwd'){
+		password.split("").reverse().join("")
+		password = sha1(password+username)
 		req.db.collection('users').findOne({"username": username,"password": password}, (err, result) => {
 			if(err) throw new Error('Gagal mendapatkan username');
             if(!result){
