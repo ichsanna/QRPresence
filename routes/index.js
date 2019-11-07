@@ -146,7 +146,9 @@ router.post('/user/:action', (req, res) => {
 		})
 	}
 	else if (action==='getinfo'){
+		console.log("aa")
 		req.db.collection('users').findOne({"username": username}, (err, result) => {
+			console.log("bb")
 			if(err) throw new Error('Gagal mendapatkan username');
             if(!result){
                 let response = {
@@ -158,7 +160,7 @@ router.post('/user/:action', (req, res) => {
                 res.status(404).json(response);
 			}
 			else {
-				// delete result.password
+				delete result.password
 				let response = {
                     success: true,
                     data: result
