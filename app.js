@@ -3,15 +3,27 @@ const path = require('path')
 const bodyParser = require('body-parser');
 const routes = require('./routes/index');
 const mongodb = require('express-mongo-db')
+const passport = require('passport');
+const session = require('express-session')
 const mongourl = "mongodb://user:password1@ds235078.mlab.com:35078/hahihu"
+
 
 const app = express();
 
 // view engine setup
-app.use(express.static(__dirname + '/views'));
+// app.use(express.static(__dirname + '/views'));
+// app.engine('ejs', require('ejs').renderFile);
 app.set('views', path.join(__dirname, 'views'));
-app.engine('html', require('ejs').renderFile);
-app.set('view engine', 'html');
+app.set('view engine', 'ejs');
+
+//Passport initialization
+app.use(session({
+  secret: "C4nY0uR34dTh1S",
+  resave: true,
+  saveUninitialized: true }));
+app.use(passport.initialize());
+app.use(passport.session());
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'views')));

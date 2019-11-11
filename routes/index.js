@@ -3,26 +3,60 @@ const router = express.Router();
 const qr = require('qr-image');
 const sha1 = require('sha1');
 const randomstring = require('crypto-random-string');
+const passport = require('passport');
+const localstrategy = require(passport-local).Strategy;
 
-// ----------------------- ROUTES -----------------------
-router.get('/', (res) => {
-	res.render('index');
+// ----------------------- PASSPORT -----------------------
+passport.serializeUser(function (user, done) {
+    done(null, user);
 });
-router.get('/qr/get', (req, res) => {
+passport.deserializeUser(function (user, done) {
+    done(null, user);
+});
+ 
+// passport local strategy for local-login, local refers to this app
+passport.use('login', new LocalStrategy(
+    function (username, password, done) {
+        if (username === users[0].username && password === users[0].password) {
+            return done(null, users[0]);
+        } else {
+            return done(null, false, {"message": "User not found."});
+        }
+    })
+);
+function isLoggedIn(req, res, next) {
+    if (req.isAuthenticated())
+        return next();
+ 
+    res.sendStatus(401);
+}
+// ----------------------- WEB ROUTES -----------------------
+router.get('/', (req,res) =>{
+	res.redirect('/login')
+})
+router.get('/login', (req,res) => {
+	res.render('login');
+});
+router.get('/register', (req,res)=> {
+	res.render('register')
+})
+
+// ----------------------- API ROUTES -----------------------
+router.get('/api/qr/get', (req, res) => {
 	var output = qr.image(req.query['classid'], {type: 'png',margin: 1,size: 50,ec_level: 'H'});
 	res.type('png');
 	output.pipe(res);
 });
 
 // NEK UDAH JADI DIHAPUS
-router.get('/getusers', (req,res) => {
+router.get('/api/getusers', (req,res) => {
 	var output = req.db.collection('users').find().toArray()
 	output.then((result) => {
 		res.send(result)
 	})
 });
 
-router.post('/class/:action', (req,res) => {
+router.post('/api/class/:action', (req,res) => {
 	var action = req.params.action
 	var classid = randomstring({length: 15});
 	var username = req.body.username
@@ -61,8 +95,11 @@ router.post('/class/:action', (req,res) => {
 			res.status(200).json(response);
 		})
 	}
+	else {
+		res.status(404).send("Error")
+	}
 })
-router.post('/user/:action', (req, res) => {
+router.post('/api/user/:action', (req, res) => {
 	var action = req.params.action
 	var username = req.body.username
 	var password = req.body.password
@@ -123,6 +160,8 @@ router.post('/user/:action', (req, res) => {
 	else if (action==='changepwd'){
 		password.split("").reverse().join("")
 		password = sha1(password+username)
+		newpassword.split("").reverse().join("")
+		newpassword = sha1(newpassword+username)
 		req.db.collection('users').findOne({"username": username,"password": password}, (err, result) => {
 			if(err) throw new Error('Gagal mendapatkan username');
             if(!result){
@@ -172,6 +211,9 @@ router.post('/user/:action', (req, res) => {
                 res.status(200).json(response);
 			}
 		})
+	}
+	else {
+		res.status(404).send("Error")
 	}
 });
 
