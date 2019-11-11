@@ -4,37 +4,47 @@ const qr = require('qr-image');
 const sha1 = require('sha1');
 const randomstring = require('crypto-random-string');
 const passport = require('passport');
-const localstrategy = require(passport-local).Strategy;
+const localstrategy = require('passport-local').Strategy;
 
 // ----------------------- PASSPORT -----------------------
 passport.serializeUser(function (user, done) {
     done(null, user);
 });
-passport.deserializeUser(function (user, done) {
-    done(null, user);
+passport.deserializeUser(function (obj, done) {
+    done(null, obj);
 });
- 
-// passport local strategy for local-login, local refers to this app
-passport.use('login', new LocalStrategy(
-    function (username, password, done) {
-        if (username === users[0].username && password === users[0].password) {
-            return done(null, users[0]);
-        } else {
-            return done(null, false, {"message": "User not found."});
-        }
+passport.use('login', new localstrategy(
+	{passReqToCallback: true},
+    function (req, username, password, done){
+		password = password.split("").reverse().join("")
+		password = sha1(password+username)
+		console.log(password)
+		req.db.collection('users').findOne({username: username,password: password},(err,result) => {
+			console.log("aaa")
+			console.log(result)
+			if(err) return done(err)
+            if(!result){
+				console.log("false")
+                return done(null,false)
+			}
+			else {
+				console.log("true")
+				delete result.password
+				return done(null, result)
+			}
+		})
     })
 );
 function isLoggedIn(req, res, next) {
-    if (req.isAuthenticated())
-        return next();
- 
-    res.sendStatus(401);
+    if (req.isAuthenticated()) return next();
+    else res.redirect('/login');
 }
 // ----------------------- WEB ROUTES -----------------------
-router.get('/', (req,res) =>{
-	res.redirect('/login')
+router.get('/', isLoggedIn, (req,res) =>{
+	res.render('dashboard')
 })
 router.get('/login', (req,res) => {
+	console.log("login")
 	res.render('login');
 });
 router.get('/register', (req,res)=> {
@@ -42,6 +52,13 @@ router.get('/register', (req,res)=> {
 })
 
 // ----------------------- API ROUTES -----------------------
+router.post('/api/web/user/login', passport.authenticate('login',{failureRedirect: '/login'}), (req,res) => {
+	res.redirect('/')
+})
+router.get('/api/web/user/logout', (req,res) => {
+	req.logout()
+	res.redirect('/')
+})
 router.get('/api/qr/get', (req, res) => {
 	var output = qr.image(req.query['classid'], {type: 'png',margin: 1,size: 50,ec_level: 'H'});
 	res.type('png');
@@ -107,7 +124,7 @@ router.post('/api/user/:action', (req, res) => {
 	var fullname = req.body.fullname
 	var nim = req.body.nim
 	if (action==='register'){
-		password.split("").reverse().join("")
+		password = password.split("").reverse().join("")
 		password = sha1(password+username)
 		req.db.collection('users').findOne({"username": username}, (err, result) => {
 			if(err) throw new Error('Gagal mendapatkan username');
@@ -134,7 +151,7 @@ router.post('/api/user/:action', (req, res) => {
 		})
 	}
 	else if (action==='login'){
-		password.split("").reverse().join("")
+		password = password.split("").reverse().join("")
 		password = sha1(password+username)
 		req.db.collection('users').findOne({"username": username,"password": password}, (err, result) => {
 			if(err) throw new Error('Gagal mendapatkan username');
@@ -158,9 +175,9 @@ router.post('/api/user/:action', (req, res) => {
 		})
 	}
 	else if (action==='changepwd'){
-		password.split("").reverse().join("")
+		password = password.split("").reverse().join("")
 		password = sha1(password+username)
-		newpassword.split("").reverse().join("")
+		newpassword = newpassword.split("").reverse().join("")
 		newpassword = sha1(newpassword+username)
 		req.db.collection('users').findOne({"username": username,"password": password}, (err, result) => {
 			if(err) throw new Error('Gagal mendapatkan username');
@@ -189,9 +206,9 @@ router.post('/api/user/:action', (req, res) => {
 		})
 	}
 	else if (action==='getinfo'){
-		console.log("aa")
+		// console.log("aa")
 		req.db.collection('users').findOne({"username": username}, (err, result) => {
-			console.log("bb")
+			// console.log("bb")
 			if(err) throw new Error('Gagal mendapatkan username');
             if(!result){
                 let response = {
