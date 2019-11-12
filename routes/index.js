@@ -86,7 +86,9 @@ router.get('/api/generatereport', (req,res) =>{
 	var classid = req.body.classid;
 	req.db.collectionn('classes').findOne({"classid": classid},(err,result) =>{
 		if (err) throw new Error('Gagal mendapatkan info kelas')
+		console.log("aa")
 		if(!result){
+			console.log("bb")
 			let response = {
 				success: false,
 				data: {
@@ -96,6 +98,7 @@ router.get('/api/generatereport', (req,res) =>{
 			res.status(404).json(response);
 		}
 		else {
+			console.log("cc")
 			let json2csvCallback = function (err, csv) {
 				if (err) throw err;
 				fs.writeFile('name.csv', output, 'utf8', function(err) {
