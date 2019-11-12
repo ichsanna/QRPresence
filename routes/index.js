@@ -5,6 +5,7 @@ const sha1 = require('sha1');
 const randomstring = require('crypto-random-string');
 const passport = require('passport');
 const localstrategy = require('passport-local').Strategy;
+const json2csv = require('json-2-csv');
 
 // ----------------------- PASSPORT -----------------------
 passport.serializeUser(function (user, done) {
@@ -95,6 +96,20 @@ router.get('/api/generatereport', (req,res) =>{
 			res.status(404).json(response);
 		}
 		else {
+			let json2csvCallback = function (err, csv) {
+				if (err) throw err;
+				fs.writeFile('name.csv', output, 'utf8', function(err) {
+				  if (err) {
+					console.log('Some error occured - file either not saved or corrupted file saved.');
+				  } else {
+					console.log('It\'s saved!');
+				  }
+				});
+			};
+			
+			converter.json2csv(myObj.rows, json2csvCallback, {
+			  prependHeader: false      // removes the generated header of "value1,value2,value3,value4" (in case you don't want it)
+			});
 			res.status(200).json(response);
 		}
 	})
