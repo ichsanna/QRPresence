@@ -81,7 +81,24 @@ router.get('/api/qr/get', (req, res) => {
 	res.type('png');
 	output.pipe(res);
 });
-
+router.get('/api/generatereport', (req,res) =>{
+	var classid = req.body.classid;
+	req.db.collectionn('classes').findOne({"classid": classid},(err,result) =>{
+		if (err) throw new Error('Gagal mendapatkan info kelas')
+		if(!result){
+			let response = {
+				success: false,
+				data: {
+					message: "Kelas tidak ditemukan"
+				}
+			}
+			res.status(404).json(response);
+		}
+		else {
+			res.status(200).json(response);
+		}
+	})
+})
 // NEK UDAH JADI DIHAPUS
 router.get('/api/getusers', (req,res) => {
 	var output = req.db.collection('users').find().toArray()
@@ -96,7 +113,7 @@ router.post('/api/class/:action', (req,res) => {
 	if (action==='create'){
 		var classid = randomstring({length: 15});
 		req.db.collection('classes').findOne({"classid": classid}, (err, result) => {
-			if (err) throw new Error('Gagal mendapatkan kelas');
+			if (err) throw new Error('Gagal mendapatkan info kelas');
 			if (!result){
 				req.db.collection('classes').insertOne({"owner": username,"classid": classid}, (err, result) => {
 					if(err) throw new Error('Gagal menambahkan kelas');
@@ -135,7 +152,6 @@ router.post('/api/class/:action', (req,res) => {
 				})
 			}
 			else {
-				delete result.password
 				let response = {
                     success: false,
                     data: {
