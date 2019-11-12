@@ -107,7 +107,7 @@ router.get('/api/generatereport', (req,res) =>{
 				});
 			};
 			
-			converter.json2csv(myObj.rows, json2csvCallback, {
+			converter.json2csv(result.rows, json2csvCallback, {
 			  prependHeader: false      // removes the generated header of "value1,value2,value3,value4" (in case you don't want it)
 			});
 			res.status(200).json(response);
