@@ -53,7 +53,24 @@ router.post('/api/web/user/login', passport.authenticate('login',{failureRedirec
 	res.redirect('/')
 })
 router.post('/api/web/user/register', (req,res) => {
-	res.redirect('/')
+	var username = req.body.username
+	var password = req.body.password
+	var fullname = req.body.fullname
+	var nim = req.body.nim
+	password = password.split("").reverse().join("")
+	password = sha1(password+username)
+	req.db.collection('users').findOne({"username": username}, (err, result) => {
+		if(err) throw new Error('Gagal mendapatkan username');
+        if(result){
+			res.status(404).redirect("/register");
+		}
+		else{
+			req.db.collection('users').insertOne({"username": username,"password": password,"fullname": fullname,"nim": nim}, (err, result) => {
+				if(err) throw new Error('Gagal menambahkan username');
+				res.status(200).redirect("/login");
+			})
+		}
+	})
 })
 router.get('/api/web/user/logout', (req,res) => {
 	req.logout()
@@ -100,7 +117,6 @@ router.post('/api/class/:action', (req,res) => {
 		var nim = req.body.nim
 		var fieldpresensi = {fullname: fullname, nim: nim}
 		var classid = req.body.classid;
-		//duplicate presensi
 		req.db.collection('classes').findOne({"classid": classid,"presensi.fullname": fullname,"presensi.nim": nim}, (err, result) => {
 			if(err) throw new Error('Gagal mendapatkan username');
 			console.log(result)
