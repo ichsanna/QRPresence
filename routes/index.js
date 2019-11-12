@@ -18,10 +18,7 @@ passport.use('login', new localstrategy(
     function (req, username, password, done){
 		password = password.split("").reverse().join("")
 		password = sha1(password+username)
-		console.log(password)
 		req.db.collection('users').findOne({username: username,password: password},(err,result) => {
-			console.log("aaa")
-			console.log(result)
 			if(err) return done(err)
             if(!result){
 				console.log("false")
@@ -75,9 +72,9 @@ router.get('/api/getusers', (req,res) => {
 
 router.post('/api/class/:action', (req,res) => {
 	var action = req.params.action
-	var classid = randomstring({length: 15});
 	var username = req.body.username
 	if (action==='create'){
+		var classid = randomstring({length: 15});
 		req.db.collection('classes').findOne({"classid": classid}, (err, result) => {
 			if (err) throw new Error('Gagal mendapatkan kelas');
 			if (!result){
@@ -99,6 +96,8 @@ router.post('/api/class/:action', (req,res) => {
 		var fullname = req.body.fullname
 		var nim = req.body.nim
 		var fieldpresensi = {fullname: fullname, nim: nim}
+		var classid = req.body.classid;
+		//duplicate presensi
 		req.db.collection('classes').update({"classid": classid},{$push:{"presensi": fieldpresensi}}, (err,result) => {
 			if(err) throw new Error('Gagal menambahkan kelas');
 			let response = {
