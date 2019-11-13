@@ -101,10 +101,9 @@ router.get('/api/generatereport', (req,res) => {
 			// Create a reusable style
 			var style = workbook.createStyle({
 			  font: {
-			    color: '#FF0800',
+			    color: '#FFFFFF',
 			    size: 12
 			  },
-			  numberFormat: '$#,##0.00; ($#,##0.00); -'
 			});
 			
 			// Set value of cell A1 to 100 as a number type styled with paramaters of style
@@ -123,7 +122,8 @@ router.get('/api/generatereport', (req,res) => {
 			worksheet.cell(3,1).bool(true).style(style).style({font: {size: 14}});
 			
 			workbook.write('Excel.xlsx');
-			res.download('Excel.xlsx')
+			// res.status(200).download('Excel.xlsx')
+			res.status(200).send(result)
 		}
 	})
 })
