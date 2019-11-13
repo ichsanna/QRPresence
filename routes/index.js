@@ -93,7 +93,7 @@ router.get('/api/generatereport', (req,res) => {
 			res.status(404).json(response);
 		}
 		else {			
-			var workbook = new excel.Workbook();
+			var workbook = new excel4node.Workbook();
 
 			// Add Worksheets to the workbook
 			var worksheet = workbook.addWorksheet('Sheet 1');
