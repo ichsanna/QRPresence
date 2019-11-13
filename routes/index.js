@@ -22,11 +22,9 @@ passport.use('login', new localstrategy(
 		req.db.collection('users').findOne({username: username,password: password},(err,result) => {
 			if(err) return done(err)
             if(!result){
-				console.log("false")
                 return done(null,false)
 			}
 			else {
-				console.log("true")
 				delete result.password
 				return done(null, result)
 			}
@@ -42,7 +40,6 @@ router.get('/', isLoggedIn, (req,res) =>{
 	res.render('main')
 })
 router.get('/login', (req,res) => {
-	console.log("login")
 	res.render('login');
 });
 router.get('/register', (req,res)=> {
@@ -82,13 +79,11 @@ router.get('/api/qr/get', (req, res) => {
 	res.type('png');
 	output.pipe(res);
 });
-router.get('/api/generatereport', (req,res) =>{
+router.get('/api/generatereport', (req,res) => {
 	var classid = req.body.classid;
-	req.db.collectionn('classes').findOne({"classid": classid},(err,result) =>{
+	req.db.collection('classes').findOne({"classid": classid}, (err,result) => {
 		if (err) throw new Error('Gagal mendapatkan info kelas')
-		console.log("aa")
 		if(!result){
-			console.log("bb")
 			let response = {
 				success: false,
 				data: {
@@ -97,8 +92,7 @@ router.get('/api/generatereport', (req,res) =>{
 			}
 			res.status(404).json(response);
 		}
-		else {
-			console.log("cc")
+		else {			
 			let json2csvCallback = function (err, csv) {
 				if (err) throw err;
 				fs.writeFile('name.csv', output, 'utf8', function(err) {
@@ -109,10 +103,11 @@ router.get('/api/generatereport', (req,res) =>{
 				  }
 				});
 			};
-			
-			converter.json2csv(result.rows, json2csvCallback, {
+			console.log("ddd")
+			json2csv.json2csv(result, json2csvCallback, {
 			  prependHeader: false      // removes the generated header of "value1,value2,value3,value4" (in case you don't want it)
 			});
+			console.log("eee")
 			res.status(200).json(response);
 		}
 	})
@@ -154,7 +149,6 @@ router.post('/api/class/:action', (req,res) => {
 		var classid = req.body.classid;
 		req.db.collection('classes').findOne({"classid": classid,"presensi.fullname": fullname,"presensi.nim": nim}, (err, result) => {
 			if(err) throw new Error('Gagal mendapatkan username');
-			console.log(result)
             if(!result){
 				req.db.collection('classes').update({"classid": classid},{$push:{"presensi": fieldpresensi}}, {upsert: true}, (err,result) => {
 					if(err) throw new Error('Gagal menambahkan kelas');
