@@ -7,6 +7,7 @@ const passport = require('passport');
 const localstrategy = require('passport-local').Strategy;
 const excel4node = require('excel4node');
 
+// Panggil api pake request web, kaya register, create class
 // ----------------------- PASSPORT -----------------------
 passport.serializeUser(function (user, done) {
     done(null, user);
@@ -105,25 +106,21 @@ router.get('/api/generatereport', (req,res) => {
 			    size: 12
 			  },
 			});
-			
-			// Set value of cell A1 to 100 as a number type styled with paramaters of style
-			worksheet.cell(1,1).number(100).style(style);
-			
-			// Set value of cell B1 to 300 as a number type styled with paramaters of style
-			worksheet.cell(1,2).number(200).style(style);
-			
-			// Set value of cell C1 to a formula styled with paramaters of style
-			worksheet.cell(1,3).formula('A1 + B1').style(style);
-			
-			// Set value of cell A2 to 'string' styled with paramaters of style
-			worksheet.cell(2,1).string('string').style(style);
-			
-			// Set value of cell A3 to true as a boolean type styled with paramaters of style but with an adjustment to the font size.
-			worksheet.cell(3,1).bool(true).style(style).style({font: {size: 14}});
-			
+			var jumlahpresensi = Object.keys(result.presensi).length
+			worksheet.cell(1,1).string(result.classname).style(style);
+			worksheet.cell(2,1).string("Class ID: "+result.classid).style(style);
+			worksheet.cell(3,1).string("Owner: "+result.owner).style(style);
+			worksheet.cell(4,1).string('No.').style(style);
+			worksheet.cell(4,2).string('Full Name').style(style);
+			worksheet.cell(4,3).string('NIM').style(style);
+			for (i=0;i<jumlahpresensi;i++){
+				worksheet.cell(5+i,1).number(i+1).style(style);
+				worksheet.cell(5+i,2).string(result.presensi[i].fullname);
+				worksheet.cell(5+i,3).string(result.presensi[i].nim);
+			}
 			workbook.write('Excel.xlsx');
-			// res.status(200).download('Excel.xlsx')
-			res.status(200).send(result)
+			res.status(200).download('Excel.xlsx')
+			// res.status(200).send(result)
 		}
 	})
 })
@@ -140,15 +137,17 @@ router.post('/api/class/:action', (req,res) => {
 	var username = req.body.username
 	if (action==='create'){
 		var classid = randomstring({length: 15});
+		var classname = req.body.classname
 		req.db.collection('classes').findOne({"classid": classid}, (err, result) => {
 			if (err) throw new Error('Gagal mendapatkan info kelas');
 			if (!result){
-				req.db.collection('classes').insertOne({"owner": username,"classid": classid}, (err, result) => {
+				req.db.collection('classes').insertOne({"owner": username,"classid": classid,"classname": classname}, (err, result) => {
 					if(err) throw new Error('Gagal menambahkan kelas');
 					let response = {
 						success: true,
 						data : {
-							classid: classid
+							classid: classid,
+							classname: classname
 						}
 					}
 					res.status(200).json(response);
