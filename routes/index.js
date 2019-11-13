@@ -5,7 +5,7 @@ const sha1 = require('sha1');
 const randomstring = require('crypto-random-string');
 const passport = require('passport');
 const localstrategy = require('passport-local').Strategy;
-const json2csv = require('json-2-csv');
+const excel4node = require('excel4node');
 
 // ----------------------- PASSPORT -----------------------
 passport.serializeUser(function (user, done) {
@@ -93,22 +93,38 @@ router.get('/api/generatereport', (req,res) => {
 			res.status(404).json(response);
 		}
 		else {			
-			let json2csvCallback = function (err, csv) {
-				if (err) throw err;
-				fs.writeFile('name.csv', output, 'utf8', function(err) {
-				  if (err) {
-					console.log('Some error occured - file either not saved or corrupted file saved.');
-				  } else {
-					console.log('It\'s saved!');
-				  }
-				});
-			};
-			console.log("ddd")
-			json2csv.json2csv(result, json2csvCallback, {
-			  prependHeader: false      // removes the generated header of "value1,value2,value3,value4" (in case you don't want it)
+			var workbook = new excel.Workbook();
+
+			// Add Worksheets to the workbook
+			var worksheet = workbook.addWorksheet('Sheet 1');
+					
+			// Create a reusable style
+			var style = workbook.createStyle({
+			  font: {
+			    color: '#FF0800',
+			    size: 12
+			  },
+			  numberFormat: '$#,##0.00; ($#,##0.00); -'
 			});
-			console.log("eee")
-			res.status(200).json(json2csvCallback);
+			
+			// Set value of cell A1 to 100 as a number type styled with paramaters of style
+			worksheet.cell(1,1).number(100).style(style);
+			
+			// Set value of cell B1 to 300 as a number type styled with paramaters of style
+			worksheet.cell(1,2).number(200).style(style);
+			
+			// Set value of cell C1 to a formula styled with paramaters of style
+			worksheet.cell(1,3).formula('A1 + B1').style(style);
+			
+			// Set value of cell A2 to 'string' styled with paramaters of style
+			worksheet.cell(2,1).string('string').style(style);
+			
+			// Set value of cell A3 to true as a boolean type styled with paramaters of style but with an adjustment to the font size.
+			worksheet.cell(3,1).bool(true).style(style).style({font: {size: 14}});
+			
+			workbook.write('Excel.xlsx');
+			
+			res.status(200).send(workbook);
 		}
 	})
 })
