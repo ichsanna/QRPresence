@@ -123,8 +123,7 @@ router.get('/api/generatereport', (req,res) => {
 			worksheet.cell(3,1).bool(true).style(style).style({font: {size: 14}});
 			
 			workbook.write('Excel.xlsx');
-			
-			res.status(200).send(workbook);
+			res.download('Excel.xlsx')
 		}
 	})
 })
