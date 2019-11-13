@@ -108,7 +108,7 @@ router.get('/api/generatereport', (req,res) => {
 			  prependHeader: false      // removes the generated header of "value1,value2,value3,value4" (in case you don't want it)
 			});
 			console.log("eee")
-			res.status(200).json(result);
+			res.status(200).json(json2csvCallback);
 		}
 	})
 })
