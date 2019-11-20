@@ -102,7 +102,7 @@ router.get('/api/generatereport', (req,res) => {
 			// Create a reusable style
 			var style = workbook.createStyle({
 			  font: {
-			    color: '#FFFFFF',
+			    color: '#000000',
 			    size: 12
 			  },
 			});
@@ -110,15 +110,16 @@ router.get('/api/generatereport', (req,res) => {
 			worksheet.cell(1,1).string(result.classname).style(style);
 			worksheet.cell(2,1).string("Class ID: "+result.classid).style(style);
 			worksheet.cell(3,1).string("Owner: "+result.owner).style(style);
-			worksheet.cell(4,1).string('No.').style(style);
-			worksheet.cell(4,2).string('Full Name').style(style);
-			worksheet.cell(4,3).string('NIM').style(style);
+			worksheet.cell(4,1).string("No.").style(style);
+			worksheet.cell(4,2).string("Full Name").style(style);
+			worksheet.cell(4,3).string("NIM").style(style);
 			for (i=0;i<jumlahpresensi;i++){
 				worksheet.cell(5+i,1).number(i+1).style(style);
-				worksheet.cell(5+i,2).string(result.presensi[i].fullname);
-				worksheet.cell(5+i,3).string(result.presensi[i].nim);
+				worksheet.cell(5+i,2).string(result.presensi[i].fullname).style(style);
+				worksheet.cell(5+i,3).string(result.presensi[i].nim).style(style);
 			}
 			workbook.write('Excel.xlsx');
+			console.log(result)
 			res.status(200).download('Excel.xlsx')
 			// res.status(200).send(result)
 		}
