@@ -39,7 +39,7 @@ function isLoggedIn(req, res, next) {
 // ----------------------- WEB ROUTES -----------------------
 router.get('/', isLoggedIn, (req,res) =>{
 	req.db.collection('classes').find({"owner": req.user.username}).toArray((err,result) => {
-		if(err) throw new Error('Gagal mendapatkan username');
+		if(err) throw new Error('Gagal mendapatkan kelas');
 		console.log(result)
 		res.render('main',{data: req.user, kelas: result})
 	})
@@ -50,7 +50,13 @@ router.get('/login', (req,res) => {
 router.get('/register', (req,res)=> {
 	res.render('register')
 })
-
+router.get('/class/:classid', (req,res) => {
+	req.db.collection('classes').findOne({"classid": req.params.classid}).toArray((err,result) => {
+		if(err) throw new Error('Gagal mendapatkan kelas');
+		console.log(result)
+		res.render('kelas',{data: req.user, kelas: result})
+	})
+})
 // ----------------------- API ROUTES -----------------------
 router.post('/api/web/user/login', passport.authenticate('login',{failureRedirect: '/login'}), (req,res) => {
 	res.redirect('/')

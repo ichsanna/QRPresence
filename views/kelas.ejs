@@ -119,7 +119,7 @@
                 <div class="dropdown">
                     <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton"
                         data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        username
+                        <%=data.username%>
                     </button>
                     <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
                         <a class="dropdown-item" href="/api/web/user/logout">Log Out</a>
@@ -136,8 +136,8 @@
                     <ul class="nav flex-column">
                         <li class="nav-item">
                             <a>
-                                <p>Fisika Dasar<br />
-                                    ID: 9sjd93j5lfjd0sd</p>
+                                <p><%=kelas.classname%><br />
+                                    <%=kelas.classdesc%></p>
                                 <button type="button" class="btn btn-success">
                                     <img src="icons/download.svg" style="filter: invert(100%);" alt="download" width="15"
                                         height="15"> Download Presensi
@@ -182,7 +182,7 @@
             <h3>Scan QRCode</h3>
             <div class="QR-Container">
                 <img class="QR-FullIcon" src="icons/maximize.svg" alt="maximize" width="20" height="20">
-                <img class="QR-Code" src="Resources\qr-code.svg" alt="QRCode" width="400" height="400">
+                <img class="QR-Code" src="/api/qr/get?classid=<%= kelas.classid %>" alt="QRCode" width="400" height="400">
             </div>
         </div>
     </div>
