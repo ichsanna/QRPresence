@@ -156,7 +156,13 @@
                             </tr>
                         </thead>
                         <tbody>
-
+                            <% kelas.forEach(function(namakelas) { %>
+                                <tr>
+                                    <td>aaa</td>
+                                    <td><%= namakelas.owner %></td>
+                                    <td>aaaaa</td>
+                                </tr>
+                                <% }); %>
                         </tbody>
                     </table>
                 </div>
