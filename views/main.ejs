@@ -156,9 +156,11 @@
                             </tr>
                         </thead>
                         <tbody>
+                            <% var count=0;%>
                             <% kelas.forEach(function(namakelas) { %>
                                 <tr>
-                                    <td>aaa</td>
+                                    <% count = count + 1; %>
+                                    <td><%= count %></td>
                                     <td><%= namakelas.owner %></td>
                                     <td>aaaaa</td>
                                 </tr>
