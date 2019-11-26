@@ -1,0 +1,212 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
+    <meta name="generator" content="Jekyll v3.8.5">
+    <title>QRPresence</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="bootstrap/css/bootstrap.css" rel="stylesheet">
+    <script src="js/jquery-3.2.1.slim.min.js"></script>
+    <script src="bootstrap/js/bootstrap.bundle.js"></script>
+
+    <style>
+        .xIcon-HapusKelas {
+            width: 11;
+            height: 11;
+            vertical-align: middle;
+        }
+    </style>
+
+    <style>
+        .QR-Container {
+            position: relative;
+            margin: auto;
+            padding: 5px;
+            height: 460px;
+            width: 460px;
+            border: 1px solid black;
+            text-align: center;
+        }
+
+        .QR-FullIcon {
+            position: relative;
+            float: right;
+            cursor: pointer;
+        }
+
+        .QR-Code {
+            position: absolute;
+            top: 30px;
+            left: 30px;
+        }
+    </style>
+    <style>
+        /* The Modal (background) */
+        .modal {
+            display: none;
+            /* Hidden by default */
+            position: fixed;
+            /* Stay in place */
+            z-index: 1;
+            /* Sit on top */
+            padding-top: 19.5%;
+            /* Location of the box */
+            left: 0;
+            top: 0;
+            width: 100%;
+            /* Full width */
+            height: 100%;
+            /* Full height */
+            overflow: auto;
+            /* Enable scroll if needed */
+            background-color: rgb(0, 0, 0);
+            /* Fallback color */
+            background-color: rgba(0, 0, 0, 0.4);
+            /* Black w/ opacity */
+        }
+
+        .modal:hover {
+            cursor: auto;
+        }
+
+        /* Modal Content */
+        .modal-content {
+            background-color: #fefefe;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 35%;
+        }
+
+        /* The Close Button */
+        .close {
+            display: block;
+            position: absolute;
+            color: #aaaaaa;
+            font-size: 28px;
+            font-weight: bold;
+            width: 1;
+            position: absolute;
+            right: 10px;
+            top: 10px;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: #000;
+            text-decoration: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+        <a class="navbar-brand" href="/">QRPresence</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse"
+            aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav mr-auto">
+            </ul>
+            <form class="form-inline mt-2 mt-md-0" style="margin-right: 5%">
+                <div class="dropdown">
+                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton"
+                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        username
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                        <a class="dropdown-item" href="/api/web/user/logout">Log Out</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </nav>
+
+    <div class="container-fluid" style="padding-top: 100px">
+        <div class="row">
+            <nav class="col-md-4 col-lg-4 d-none d-md-block">
+                <div>
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a>
+                                <p>Fisika Dasar<br />
+                                    ID: 9sjd93j5lfjd0sd</p>
+                                <button type="button" class="btn btn-success">
+                                    <img src="icons/download.svg" style="filter: invert(100%);" alt="download" width="15"
+                                        height="15"> Download Presensi
+                                </button>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+            <a class="nav-link" href="#"></a>
+            <div class="col-md-4 ml-sm-auto col-lg-4 ">
+                <div style="text-align:center;">
+                    <br />
+                    <br />
+                    <br />
+                    <button id="modalBtn" type="button" class="btn btn-danger">
+                        <img class="xIcon-HapusKelas" src="icons/x.svg" style="filter: invert(100%);" alt="x"
+                            width="15" height="15"> Hapus Kelas
+                    </button>
+                </div>
+            </div>
+            <div id="myModal" class="modal">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3 style="color:black; float: center">Apakah anda yakin?</h3>
+                        <span class="close">&times;</span>
+                    </div>
+                    <div class="modal-body">
+                        <div style="text-align: center;">
+                            <button id="modalBtn" type="button" class="btn btn-danger" style="float: center; margin-right: 10px"> Hapus 
+                            </button>
+                            <button id="modalBtn" type="button" class="btn btn-outline-danger" style="float: center; margin-left: 10px"> Batal 
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            </a>
+            </a>
+        </div>
+        <div style="text-align:center;">
+            <h3>Scan QRCode</h3>
+            <div class="QR-Container">
+                <img class="QR-FullIcon" src="icons/maximize.svg" alt="maximize" width="20" height="20">
+                <img class="QR-Code" src="Resources\qr-code.svg" alt="QRCode" width="400" height="400">
+            </div>
+        </div>
+    </div>
+    <script>
+        var modal = document.getElementById("myModal");
+        var btn = document.getElementById("modalBtn");
+        var span = document.getElementsByClassName("close")[0];
+
+        // When the user clicks the button, open the modal
+        btn.onclick = function () {
+            modal.style.display = "block";
+        }
+
+        // When the user clicks on <span> (x), close the modal
+        span.onclick = function () {
+            modal.style.display = "none";
+        }
+
+        // When the user clicks anywhere outside of the modal, close it
+        window.onclick = function (event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+    </script>
+</body>
+</html>

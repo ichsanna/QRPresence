@@ -12,8 +12,8 @@ const excel4node = require('excel4node');
 passport.serializeUser(function (user, done) {
     done(null, user);
 });
-passport.deserializeUser(function (obj, done) {
-    done(null, obj);
+passport.deserializeUser(function (user, done) {
+    done(null, user);
 });
 passport.use('login', new localstrategy(
 	{passReqToCallback: true},
@@ -38,7 +38,9 @@ function isLoggedIn(req, res, next) {
 }
 // ----------------------- WEB ROUTES -----------------------
 router.get('/', isLoggedIn, (req,res) =>{
-	res.render('main')
+	var output = req.db.collection('classes').find({"owner": req.user.username}).toArray()
+	console.log(result)
+	res.render('main',{data: req.user})
 })
 router.get('/login', (req,res) => {
 	res.render('login');
@@ -76,9 +78,12 @@ router.get('/api/web/user/logout', (req,res) => {
 	res.redirect('/')
 })
 router.get('/api/qr/get', (req, res) => {
-	var output = qr.image(req.query['classid'], {type: 'png',margin: 1,size: 50,ec_level: 'H'});
-	res.type('png');
-	output.pipe(res);
+	if (req.query['classid']){
+		var output = qr.image(req.query['classid'], {type: 'png',margin: 1,size: 50,ec_level: 'H'});
+		res.type('png');
+		output.pipe(res);
+	}
+	res.status(404)
 });
 router.get('/api/generatereport', (req,res) => {
 	var classid = req.body.classid;
