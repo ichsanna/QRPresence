@@ -72,6 +72,7 @@
         }
     </style>
 </head>
+
 <body>
     <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
         <a class="navbar-brand" href="/">QRPresence</a>
@@ -106,33 +107,38 @@
                         <li class="nav-item">
                             <a class="nav-link" href="#">
                                 <button id="modalBtn" type="button" class="btn btn-primary">
-                                    <img src="icons\plus.svg" style="filter: invert(100%);" alt="plus"
-                                        width="15" height="15"></img> Kelas Baru
+                                    <img src="icons\plus.svg" style="filter: invert(100%);" alt="plus" width="15"
+                                        height="15"></img> Kelas Baru
                                 </button>
                                 <div id="myModal" class="modal">
-                                    <form class="form-signin" method="post" action="/api/web/class/create">                                    
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <h3 style="color:black">Buat kelas baru</h3>
-                                            <span class="close">&times;</span>
-                                        </div>
-                                        <div class="modal-body">
-                                            <div style="text-align:center;">
-                                                <input type="text" id="namakelasbaru" name="namakelasbaru"
-                                                    class="form-control" placeholder="Nama Kelas" required autofocus>
-                                                <input type="text" id="deskripsikelasbaru" name="deskripsikelasbaru"
-                                                    class="form-control" placeholder="Deskripsi" style="margin-top: 10px;">
+                                    <form class="form-signin" method="post" action="/api/web/class/create">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h3 style="color:black">Buat kelas baru</h3>
+                                                <span class="close">&times;</span>
+                                            </div>
+                                            <div class="modal-body">
+                                                <div style="text-align:center;">
+                                                    <input type="text" id="namakelasbaru" name="namakelasbaru"
+                                                        class="form-control" placeholder="Nama Kelas" required
+                                                        autofocus>
+                                                    <input type="text" id="deskripsikelasbaru" name="deskripsikelasbaru"
+                                                        class="form-control" placeholder="Deskripsi"
+                                                        style="margin-top: 10px;">
+                                                    <input type="hidden" id="username" name="username"
+                                                        class="form-control" value= <%= data.username %>
+                                                        style="margin-top: 10px;">
+                                                </div>
+                                            </div>
+                                            </br>
+                                            <div class="modal-footer">
+                                                <div style="text-align:center;">
+                                                    <button id="modalBtn" type="submit" class="btn btn-primary"
+                                                        style="float: right;"> Buat Kelas
+                                                    </button>
+                                                </div>
                                             </div>
                                         </div>
-                                        </br>
-                                        <div class="modal-footer">
-                                            <div style="text-align:center;">
-                                                <button id="modalBtn" type="submit" class="btn btn-primary"
-                                                    style="float: right;"> Buat Kelas
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
                                     </form>
                                 </div>
                             </a>
@@ -158,12 +164,12 @@
                         <tbody>
                             <% var count=0;%>
                             <% kelas.forEach(function(namakelas) { %>
-                                <tr>
-                                    <% count = count + 1; %>
-                                    <td><%= count %></td>
-                                    <td><%= namakelas.owner %></td>
-                                    <td>aaaaa</td>
-                                </tr>
+                            <tr>
+                                <% count = count + 1; %>
+                                <td><%= count %></td>
+                                <td><%= namakelas.owner %></td>
+                                <td>aaaaa</td>
+                            </tr>
                             <% }); %>
                         </tbody>
                     </table>
@@ -209,4 +215,5 @@
         }
     </script>
 </body>
+
 </html>

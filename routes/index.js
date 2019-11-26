@@ -38,7 +38,7 @@ function isLoggedIn(req, res, next) {
 }
 // ----------------------- WEB ROUTES -----------------------
 router.get('/', isLoggedIn, (req,res) =>{
-	req.db.collection('classes').find({"owner": "NewUser"}).toArray((err,result) => {
+	req.db.collection('classes').find({"owner": req.user.username}).toArray((err,result) => {
 		if(err) throw new Error('Gagal mendapatkan username');
 		console.log(result)
 		res.render('main',{data: req.user, kelas: result})
@@ -87,7 +87,7 @@ router.get('/api/qr/get', (req, res) => {
 	}
 	res.status(404)
 });
-router.get('/api/generatereport', (req,res) => {
+router.get('/api/class/report', (req,res) => {
 	var classid = req.body.classid;
 	req.db.collection('classes').findOne({"classid": classid}, (err,result) => {
 		if (err) throw new Error('Gagal mendapatkan info kelas')
@@ -128,7 +128,6 @@ router.get('/api/generatereport', (req,res) => {
 			workbook.write('Excel.xlsx');
 			console.log(result)
 			res.status(200).download('Excel.xlsx')
-			// res.status(200).send(result)
 		}
 	})
 })
@@ -139,65 +138,53 @@ router.get('/api/getusers', (req,res) => {
 		res.send(result)
 	})
 });
-
-router.post('/api/class/:action', (req,res) => {
-	var action = req.params.action
-	var username = req.body.username
-	if (action==='create'){
-		var classid = randomstring({length: 15});
-		var classname = req.body.classname
-		req.db.collection('classes').findOne({"classid": classid}, (err, result) => {
-			if (err) throw new Error('Gagal mendapatkan info kelas');
-			if (!result){
-				req.db.collection('classes').insertOne({"owner": username,"classid": classid,"classname": classname}, (err, result) => {
-					if(err) throw new Error('Gagal menambahkan kelas');
-					let response = {
-						success: true,
-						data : {
-							classid: classid,
-							classname: classname
-						}
-					}
-					res.status(200).json(response);
-				})
-			}
-			else res.status(400).json({success: false})
-		})
-	}
-	else if (action==='presensi'){
-		var fullname = req.body.fullname
-		var nim = req.body.nim
-		var fieldpresensi = {fullname: fullname, nim: nim}
-		var classid = req.body.classid;
-		req.db.collection('classes').findOne({"classid": classid,"presensi.fullname": fullname,"presensi.nim": nim}, (err, result) => {
-			if(err) throw new Error('Gagal mendapatkan username');
-            if(!result){
-				req.db.collection('classes').update({"classid": classid},{$push:{"presensi": fieldpresensi}}, {upsert: true}, (err,result) => {
-					if(err) throw new Error('Gagal menambahkan kelas');
-					let response = {
-						success: true,
-						data : {
-							classid: classid,
-							fullname: fullname,
-							nim: nim
-						}
-					}
-					res.status(200).json(response);
-				})
-			}
-			else {
+router.post('/api/web/class/create', (req,res) => {
+	var owner = req.body.username
+	var classid = randomstring({length: 15});
+	var classname = req.body.namakelasbaru
+	var classdesc = req.body.deskripsikelasbaru
+	req.db.collection('classes').findOne({"classid": classid}, (err, result) => {
+		if (err) throw new Error('Gagal mendapatkan info kelas');
+		if (!result){
+			req.db.collection('classes').insertOne({"owner": owner,"classid": classid,"classname": classname,"classdesc": classdesc}, (err, result) => {
+				if(err) throw new Error('Gagal menambahkan kelas');
+				res.redirect('/');
+			})
+		}
+		else res.redirect('/error')
+	})
+})
+router.post('/api/class/presensi', (req,res) => {	
+	var fullname = req.body.fullname
+	var nim = req.body.nim
+	var fieldpresensi = {fullname: fullname, nim: nim}
+	var classid = req.body.classid;
+	req.db.collection('classes').findOne({"classid": classid,"presensi.fullname": fullname,"presensi.nim": nim}, (err, result) => {
+		if(err) throw new Error('Gagal mendapatkan username');
+        if(!result){
+			req.db.collection('classes').update({"classid": classid},{$push:{"presensi": fieldpresensi}}, {upsert: true}, (err,result) => {
+				if(err) throw new Error('Gagal menambahkan kelas');
 				let response = {
-                    success: false,
-                    data: {
-						message: "Anda sudah melakukan presensi"
+					success: true,
+					data : {
+						classid: classid,
+						fullname: fullname,
+						nim: nim
 					}
-                }
-                res.status(404).json(response);
-			}
-		})
-	}
-	else {
-		res.status(404).send("Error")
+				}
+				res.status(200).json(response);
+			})
+		}
+		else {
+			let response = {
+                success: false,
+                data: {
+					message: "Anda sudah melakukan presensi"
+				}
+            }
+            res.status(404).json(response);
+		}
+	})
 	}
 })
 router.post('/api/user/:action', (req, res) => {
@@ -289,31 +276,31 @@ router.post('/api/user/:action', (req, res) => {
 			}
 		})
 	}
-	else if (action==='getinfo'){
-		req.db.collection('users').findOne({"username": username}, (err, result) => {
-			if(err) throw new Error('Gagal mendapatkan username');
-            if(!result){
-                let response = {
-                    success: false,
-                    data: {
-                        message: "Username tidak ditemukan"
-                    }
-                }
-                res.status(404).json(response);
-			}
-			else {
-				delete result.password
-				let response = {
-                    success: true,
-                    data: result
-                }
-                res.status(200).json(response);
-			}
-		})
-	}
 	else {
 		res.status(404).send("Error")
 	}
+});
+router.get('/api/user/getinfo', (req, res) => {
+	req.db.collection('users').findOne({"username": username}, (err, result) => {
+		if(err) throw new Error('Gagal mendapatkan username');
+        if(!result){
+            let response = {
+                success: false,
+                data: {
+                    message: "Username tidak ditemukan"
+                }
+            }
+            res.status(404).json(response);
+		}
+		else {
+			delete result.password
+			let response = {
+                success: true,
+                data: result
+            }
+            res.status(200).json(response);
+		}
+	})
 });
 
 module.exports = router;
