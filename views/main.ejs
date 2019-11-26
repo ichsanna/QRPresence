@@ -156,10 +156,12 @@
                             </tr>
                         </thead>
                         <tbody>
+                            <% var count = 0; %>
                             <% kelas.foreach(function(namakelas) { %>
+                            <% count = count + 1; %>
                             <tr>
-                                <td>1</td>
-                                <td><%= namakelas.owner %></td>
+                                <td><%= count %></td>
+                                <td><%= namakelas.namakelas %></td>
                                 <td>aaaaa</td>
                             </tr>
                             <% }); %>
