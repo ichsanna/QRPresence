@@ -43,6 +43,7 @@ router.get('/', isLoggedIn, (req,res) =>{
 	output.then((result) => {
 		kelas = result
 	})
+	console.log(result)
 	res.render('main',{data: req.user, kelas: result})
 })
 router.get('/login', (req,res) => {
