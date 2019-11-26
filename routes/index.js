@@ -40,7 +40,6 @@ function isLoggedIn(req, res, next) {
 router.get('/', isLoggedIn, (req,res) =>{
 	req.db.collection('classes').find({"owner": req.user.username}).toArray((err,result) => {
 		if(err) throw new Error('Gagal mendapatkan kelas');
-		console.log(result)
 		res.render('main',{data: req.user, kelas: result})
 	})
 })
