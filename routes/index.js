@@ -50,7 +50,7 @@ router.get('/register', (req,res)=> {
 	res.render('register')
 })
 router.get('/class/:classid', (req,res) => {
-	req.db.collection('classes').findOne({"classid": req.params.classid}).toArray((err,result) => {
+	req.db.collection('classes').findOne({"classid": req.params.classid}, (err,result) => {
 		if(err) throw new Error('Gagal mendapatkan kelas');
 		console.log(result)
 		res.render('kelas',{data: req.user, kelas: result})
