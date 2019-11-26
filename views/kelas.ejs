@@ -10,9 +10,9 @@
     <title>QRPresence</title>
 
     <!-- Bootstrap core CSS -->
-    <link href="bootstrap/css/bootstrap.css" rel="stylesheet">
-    <script src="js/jquery-3.2.1.slim.min.js"></script>
-    <script src="bootstrap/js/bootstrap.bundle.js"></script>
+    <link href="/bootstrap/css/bootstrap.css" rel="stylesheet">
+    <script src="/js/jquery-3.2.1.slim.min.js"></script>
+    <script src="/bootstrap/js/bootstrap.bundle.js"></script>
 
     <style>
         .xIcon-HapusKelas {
@@ -139,7 +139,7 @@
                                 <p><%=kelas.classname%><br />
                                     <%=kelas.classdesc%></p>
                                 <button type="button" class="btn btn-success">
-                                    <img src="icons/download.svg" style="filter: invert(100%);" alt="download" width="15"
+                                    <img src="/icons/download.svg" style="filter: invert(100%);" alt="download" width="15"
                                         height="15"> Download Presensi
                                 </button>
                             </a>
@@ -154,7 +154,7 @@
                     <br />
                     <br />
                     <button id="modalBtn" type="button" class="btn btn-danger">
-                        <img class="xIcon-HapusKelas" src="icons/x.svg" style="filter: invert(100%);" alt="x"
+                        <img class="xIcon-HapusKelas" src="/icons/x.svg" style="filter: invert(100%);" alt="x"
                             width="15" height="15"> Hapus Kelas
                     </button>
                 </div>
@@ -181,7 +181,7 @@
         <div style="text-align:center;">
             <h3>Scan QRCode</h3>
             <div class="QR-Container">
-                <img class="QR-FullIcon" src="icons/maximize.svg" alt="maximize" width="20" height="20">
+                <img class="QR-FullIcon" src="/icons/maximize.svg" alt="maximize" width="20" height="20">
                 <img class="QR-Code" src="/api/qr/get?classid=<%= kelas.classid %>" alt="QRCode" width="400" height="400">
             </div>
         </div>
