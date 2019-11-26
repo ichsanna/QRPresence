@@ -38,7 +38,7 @@ function isLoggedIn(req, res, next) {
 }
 // ----------------------- WEB ROUTES -----------------------
 router.get('/', isLoggedIn, (req,res) =>{
-	req.db.collection('classes').find({"owner": NewUser}).toArray((err,result) => {
+	req.db.collection('classes').find({"owner": "NewUser"}).toArray((err,result) => {
 		if(err) throw new Error('Gagal mendapatkan username');
 		console.log(result)
 		res.render('register',{data: req.user, kelas: result})
