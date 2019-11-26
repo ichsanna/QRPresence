@@ -134,8 +134,8 @@ router.get('/api/class/report', (req,res) => {
 				worksheet.cell(5+i,2).string(result.presensi[i].fullname).style(style);
 				worksheet.cell(5+i,3).string(result.presensi[i].nim).style(style);
 			}
-			workbook.write("/Downloads/"+filename);
-			res.status(200).download("/Downloads/"+filename)
+			workbook.write(filename);
+			res.status(200).download(filename)
 		}
 	})
 })
