@@ -129,20 +129,22 @@
         </div>
     </nav>
 
-    <div class="container-fluid" style="padding-top: 100px">
+    <div class="container-fluid" style="padding-top: 70px">
         <div class="row">
             <nav class="col-md-4 col-lg-4 d-none d-md-block">
                 <div>
                     <ul class="nav flex-column">
                         <li class="nav-item">
-                            <a>
-                                <p><%=kelas.classname%><br />
-                                    <%=kelas.classdesc%></p>
+                            <h3><%=kelas.classname%></h3>
+                            <p style="font-size: 20px"><%=kelas.classdesc%></p>
+                            <br>
+                            <a href="/api/class/report?classid=<%= kelas.classid %> " target="_blank">
                                 <button type="button" class="btn btn-success">
-                                    <img src="/icons/download.svg" style="filter: invert(100%);" alt="download" width="15"
-                                        height="15"> Download Presensi
+                                    <img src="/icons/download.svg" style="filter: invert(100%);" alt="download"
+                                        width="15" height="15"> Download Presensi
                                 </button>
                             </a>
+                            <p>Total presensi: <%= jumlah %></p>
                         </li>
                     </ul>
                 </div>
@@ -150,9 +152,10 @@
             <a class="nav-link" href="#"></a>
             <div class="col-md-4 ml-sm-auto col-lg-4 ">
                 <div style="text-align:center;">
-                    <br />
-                    <br />
-                    <br />
+                    <br>
+                    <br>
+                    <br>
+                    <br>
                     <button id="modalBtn" type="button" class="btn btn-danger">
                         <img class="xIcon-HapusKelas" src="/icons/x.svg" style="filter: invert(100%);" alt="x"
                             width="15" height="15"> Hapus Kelas
@@ -167,10 +170,18 @@
                     </div>
                     <div class="modal-body">
                         <div style="text-align: center;">
-                            <button id="modalBtn" type="button" class="btn btn-danger" style="float: center; margin-right: 10px"> Hapus 
+                            <form action="/api/web/class/delete" method="post">
+                                <input type="hidden" id="username" name="username"
+                                                        class="form-control" value= <%= data.username %>>
+                                <input type="hidden" id="classid" name="classid"
+                                                        class="form-control" value= <%= kelas.classid %>>
+                            <button id="modalBtn" type="submit" class="btn btn-danger"
+                                style="float: center; margin-right: 10px"> Hapus
                             </button>
-                            <button id="modalBtn" type="button" class="btn btn-outline-danger" style="float: center; margin-left: 10px"> Batal 
+                            <button id="modalBtn" type="button" class="btn btn-outline-danger"
+                                style="float: center; margin-left: 10px"> Batal
                             </button>
+                            </form>
                         </div>
                     </div>
                 </div>
@@ -181,8 +192,10 @@
         <div style="text-align:center;">
             <h3>Scan QRCode</h3>
             <div class="QR-Container">
-                <img class="QR-FullIcon" src="/icons/maximize.svg" alt="maximize" width="20" height="20">
-                <img class="QR-Code" src="/api/qr/get?classid=<%= kelas.classid %>" alt="QRCode" width="400" height="400">
+                <a href="/api/qr/get?classid=<%= kelas.classid %>" target="_blank"><img class="QR-FullIcon" src="/icons/maximize.svg" alt="maximize"
+                        width="20" height="20"></a>
+                <img class="QR-Code" src="/api/qr/get?classid=<%= kelas.classid %>" alt="QRCode" width="400"
+                    height="400">
             </div>
         </div>
     </div>
@@ -190,6 +203,7 @@
         var modal = document.getElementById("myModal");
         var btn = document.getElementById("modalBtn");
         var span = document.getElementsByClassName("close")[0];
+        var batal = document.getElementsByClassName("btn btn-outline-danger")[0];
 
         // When the user clicks the button, open the modal
         btn.onclick = function () {
@@ -201,6 +215,10 @@
             modal.style.display = "none";
         }
 
+        batal.onclick = function () {
+            modal.style.display = "none";
+        }
+
         // When the user clicks anywhere outside of the modal, close it
         window.onclick = function (event) {
             if (event.target == modal) {
@@ -209,4 +227,5 @@
         }
     </script>
 </body>
+
 </html>

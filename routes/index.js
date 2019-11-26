@@ -52,8 +52,13 @@ router.get('/register', (req,res)=> {
 router.get('/class/:classid', (req,res) => {
 	req.db.collection('classes').findOne({"classid": req.params.classid}, (err,result) => {
 		if(err) throw new Error('Gagal mendapatkan kelas');
-		console.log(result)
-		res.render('kelas',{data: req.user, kelas: result})
+		if (result.presensi == null) {
+			var jumlah = 0;
+		}
+		else {
+			var jumlah = Object.keys(result.presensi).length;
+		}
+		res.render('kelas',{data: req.user, kelas: result, jumlah: jumlah})
 	})
 })
 // ----------------------- API ROUTES -----------------------
@@ -93,17 +98,15 @@ router.get('/api/qr/get', (req, res) => {
 	res.status(404)
 });
 router.get('/api/class/report', (req,res) => {
-	var classid = req.body.classid;
+	var classid = req.query['classid'];
 	req.db.collection('classes').findOne({"classid": classid}, (err,result) => {
 		if (err) throw new Error('Gagal mendapatkan info kelas')
+		console.log(result)
 		if(!result){
-			let response = {
-				success: false,
-				data: {
-					message: "Kelas tidak ditemukan"
-				}
-			}
-			res.status(404).json(response);
+			res.send("Kelas tidak ditemukan");
+		}
+		else if (result.presensi == null){
+			res.send("Belum ada data presensi")
 		}
 		else {			
 			var workbook = new excel4node.Workbook();
@@ -118,21 +121,21 @@ router.get('/api/class/report', (req,res) => {
 			    size: 12
 			  },
 			});
+			var filename = "QRPresemce_"+result.classname+".xlsx"
 			var jumlahpresensi = Object.keys(result.presensi).length
 			worksheet.cell(1,1).string(result.classname).style(style);
-			worksheet.cell(2,1).string("Class ID: "+result.classid).style(style);
+			worksheet.cell(2,1).string(result.classdesc).style(style);
 			worksheet.cell(3,1).string("Owner: "+result.owner).style(style);
 			worksheet.cell(4,1).string("No.").style(style);
 			worksheet.cell(4,2).string("Full Name").style(style);
-			worksheet.cell(4,3).string("NIM").style(style);
+			worksheet.cell(4,3).string("ID").style(style);
 			for (i=0;i<jumlahpresensi;i++){
 				worksheet.cell(5+i,1).number(i+1).style(style);
 				worksheet.cell(5+i,2).string(result.presensi[i].fullname).style(style);
 				worksheet.cell(5+i,3).string(result.presensi[i].nim).style(style);
 			}
-			workbook.write('Excel.xlsx');
-			console.log(result)
-			res.status(200).download('Excel.xlsx')
+			workbook.write("/Downloads/"+filename);
+			res.status(200).download("/Downloads/"+filename)
 		}
 	})
 })
@@ -157,6 +160,17 @@ router.post('/api/web/class/create', (req,res) => {
 			})
 		}
 		else res.redirect('/error')
+	})
+})
+router.post('/api/web/class/delete', (req,res) => {
+	var owner = req.body.username
+	var classid = req.body.classid
+	req.db.collection('classes').remove({"owner": owner,"classid": classid}, (err, result) => {
+		if (err) throw new Error('Gagal menghapus kelas');
+		if (!result){
+			res.redirect('/error')
+		}
+		res.redirect('/')
 	})
 })
 router.post('/api/class/presensi', (req,res) => {	
