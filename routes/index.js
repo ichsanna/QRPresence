@@ -185,7 +185,6 @@ router.post('/api/class/presensi', (req,res) => {
             res.status(404).json(response);
 		}
 	})
-	}
 })
 router.post('/api/user/:action', (req, res) => {
 	var action = req.params.action
