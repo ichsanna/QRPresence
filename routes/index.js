@@ -41,7 +41,7 @@ router.get('/', isLoggedIn, (req,res) =>{
 	req.db.collection('classes').find({"owner": "NewUser"}).toArray((err,result) => {
 		if(err) throw new Error('Gagal mendapatkan username');
 		console.log(result)
-		res.render('main',{data: req.user, kelas: result})
+		res.render('main',{data: req.user})
 	})
 })
 router.get('/login', (req,res) => {
