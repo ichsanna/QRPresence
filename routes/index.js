@@ -39,8 +39,10 @@ function isLoggedIn(req, res, next) {
 // ----------------------- WEB ROUTES -----------------------
 router.get('/', isLoggedIn, (req,res) =>{
 	var output = req.db.collection('classes').find({"owner": NewUser}).toArray()
+	console.log(output)
 	output.then((result) => {
 		console.log(result)
+		console.log("AAA")
 		res.render('main',{data: req.user, kelas: result})	
 	})
 })
