@@ -40,6 +40,7 @@ function isLoggedIn(req, res, next) {
 router.get('/', isLoggedIn, (req,res) =>{
 	var output = req.db.collection('classes').find({"owner": NewUser}).toArray()
 	output.then((result) => {
+		console.log(result)
 		res.render('main',{data: req.user, kelas: result})	
 	})
 })
