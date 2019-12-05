@@ -4,68 +4,13 @@ const qr = require('qr-image');
 const sha1 = require('sha1');
 const randomstring = require('crypto-random-string');
 const passport = require('passport');
-const localstrategy = require('passport-local').Strategy;
 const excel4node = require('excel4node');
 
-// Panggil api pake request web, kaya register, create class
-// ----------------------- PASSPORT -----------------------
-passport.serializeUser(function (user, done) {
-    done(null, user);
-});
-passport.deserializeUser(function (user, done) {
-    done(null, user);
-});
-passport.use('login', new localstrategy(
-	{passReqToCallback: true},
-    function (req, username, password, done){
-		password = password.split("").reverse().join("")
-		password = sha1(password+username)
-		req.db.collection('users').findOne({username: username,password: password},(err,result) => {
-			if(err) return done(err)
-            if(!result){
-                return done(null,false)
-			}
-			else {
-				delete result.password
-				return done(null, result)
-			}
-		})
-    })
-);
-function isLoggedIn(req, res, next) {
-    if (req.isAuthenticated()) return next();
-    else res.redirect('/login');
-}
-// ----------------------- WEB ROUTES -----------------------
-router.get('/', isLoggedIn, (req,res) =>{
-	req.db.collection('classes').find({"owner": req.user.username}).toArray((err,result) => {
-		if(err) throw new Error('Gagal mendapatkan kelas');
-		res.render('main',{data: req.user, kelas: result})
-	})
-})
-router.get('/login', (req,res) => {
-	res.render('login');
-});
-router.get('/register', (req,res)=> {
-	res.render('register')
-})
-router.get('/class/:classid', (req,res) => {
-	req.db.collection('classes').findOne({"classid": req.params.classid}, (err,result) => {
-		if(err) throw new Error('Gagal mendapatkan kelas');
-		if (result.presensi == null) {
-			var jumlah = 0;
-		}
-		else {
-			var jumlah = Object.keys(result.presensi).length;
-		}
-		res.render('kelas',{data: req.user, kelas: result, jumlah: jumlah})
-	})
-})
 // ----------------------- API ROUTES -----------------------
-router.post('/api/web/user/login', passport.authenticate('login',{failureRedirect: '/login'}), (req,res) => {
+router.post('/web/user/login', passport.authenticate('login',{failureRedirect: '/login'}), (req,res) => {
 	res.redirect('/')
 })
-router.post('/api/web/user/register', (req,res) => {
+router.post('/web/user/register', (req,res) => {
 	var username = req.body.username
 	var password = req.body.password
 	var fullname = req.body.fullname
@@ -85,11 +30,11 @@ router.post('/api/web/user/register', (req,res) => {
 		}
 	})
 })
-router.get('/api/web/user/logout', (req,res) => {
+router.get('/web/user/logout', (req,res) => {
 	req.logout()
 	res.redirect('/')
 })
-router.get('/api/qr/get', (req, res) => {
+router.get('/qr/get', (req, res) => {
 	if (req.query['classid']){
 		var output = qr.image(req.query['classid'], {type: 'png',margin: 1,size: 50,ec_level: 'H'});
 		res.type('png');
@@ -97,7 +42,7 @@ router.get('/api/qr/get', (req, res) => {
 	}
 	res.status(404)
 });
-router.get('/api/class/report', (req,res) => {
+router.get('/class/report', (req,res) => {
 	var classid = req.query['classid'];
 	req.db.collection('classes').findOne({"classid": classid}, (err,result) => {
 		if (err) throw new Error('Gagal mendapatkan info kelas')
@@ -140,13 +85,13 @@ router.get('/api/class/report', (req,res) => {
 	})
 })
 // NEK UDAH JADI DIHAPUS
-router.get('/api/getusers', (req,res) => {
+router.get('/getusers', (req,res) => {
 	var output = req.db.collection('users').find().toArray()
 	output.then((result) => {
 		res.send(result)
 	})
 });
-router.post('/api/web/class/create', (req,res) => {
+router.post('/web/class/create', (req,res) => {
 	var owner = req.body.username
 	var classid = randomstring({length: 15});
 	var classname = req.body.namakelasbaru
@@ -162,7 +107,7 @@ router.post('/api/web/class/create', (req,res) => {
 		else res.redirect('/error')
 	})
 })
-router.post('/api/web/class/delete', (req,res) => {
+router.post('/web/class/delete', (req,res) => {
 	var owner = req.body.username
 	var classid = req.body.classid
 	req.db.collection('classes').remove({"owner": owner,"classid": classid}, (err, result) => {
@@ -173,7 +118,7 @@ router.post('/api/web/class/delete', (req,res) => {
 		res.redirect('/')
 	})
 })
-router.post('/api/class/presensi', (req,res) => {	
+router.post('/class/presensi', (req,res) => {	
 	var fullname = req.body.fullname
 	var nim = req.body.nim
 	var fieldpresensi = {fullname: fullname, nim: nim}
@@ -205,7 +150,7 @@ router.post('/api/class/presensi', (req,res) => {
 		}
 	})
 })
-router.post('/api/user/:action', (req, res) => {
+router.post('/user/:action', (req, res) => {
 	var action = req.params.action
 	var username = req.body.username
 	var password = req.body.password
@@ -298,7 +243,7 @@ router.post('/api/user/:action', (req, res) => {
 		res.status(404).send("Error")
 	}
 });
-router.get('/api/user/getinfo', (req, res) => {
+router.get('/user/getinfo', (req, res) => {
 	req.db.collection('users').findOne({"username": username}, (err, result) => {
 		if(err) throw new Error('Gagal mendapatkan username');
         if(!result){

@@ -1,7 +1,8 @@
 const express = require('express')
 const path = require('path')
 const bodyParser = require('body-parser');
-const routes = require('./routes/index');
+const webroutes = require('./routes/web');
+const apiroutes = require('./routes/api')
 const mongodb = require('express-mongo-db')
 const passport = require('passport');
 const session = require('express-session')
@@ -28,7 +29,8 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'views')));
 app.use(mongodb(mongourl));
-app.use('/', routes);
+app.use('/', webroutes);
+app.use('/api/',apiroutes);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
