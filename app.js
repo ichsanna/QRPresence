@@ -6,7 +6,7 @@ const apiroutes = require('./routes/api')
 const mongodb = require('express-mongo-db')
 const passport = require('passport');
 const session = require('express-session')
-const mongourl = "mongodb://user:password1@ds235078.mlab.com:35078/hahihu"
+const mongourl = "mongodb+srv://admin:admin@cluster0.rp09c.mongodb.net/haha?retryWrites=true&w=majority"
 
 
 const app = express();
